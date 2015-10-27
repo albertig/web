@@ -1,0 +1,67 @@
+function [ geo ] = web_spiral(n_radial,n_spiral,D,beta)
+
+
+L = 1.1*D/2;
+R = L*cosd(beta);
+H = L*sind(beta);
+r = R/(n_spiral+1);
+r_step = r/n_radial;
+theta = 2*pi/n_radial;
+
+node = zeros(n_radial*(n_spiral+1)-1,3);
+connect = zeros(n_radial*n_spiral-1+n_radial*(n_spiral+1),2);
+displaced = zeros(n_radial,3);
+
+index = 1;
+for i = 1:n_radial
+    node(index,1) = R*cos((i-1)*theta);
+    node(index,2) = R*sin((i-1)*theta);
+    node(index,3) = (D/2-R)/(D/2)*H;
+    index = index + 1;
+    displaced(i,:) = [D/2*cos((i-1)*theta) D/2*sin((i-1)*theta) 0];
+end
+
+r_current = R-r;
+for i = 1:n_spiral
+    for j = 1:n_radial
+        node(index,1) = r_current*cos((j-1)*theta);
+        node(index,2) = r_current*sin((j-1)*theta);
+        node(index,3) = (D/2-r_current)/(D/2)*H;
+        r_current = r_current-r_step;
+        index = index+1;
+    end
+end
+
+node(index,:) = [0 0 H];
+
+node_id = n_radial+1;
+for i = 1:n_spiral*n_radial-1
+    connect(i,:) = [node_id node_id+1];
+    node_id = node_id + 1;
+end
+
+element = n_spiral*n_radial;
+node_id = 1;
+for i = 1:n_spiral
+    for j = 1:n_radial
+        connect(element,:) = [node_id node_id+n_radial];
+        node_id = node_id + 1;
+        element = element + 1;
+    end
+end
+
+node_id = length(node);
+for i = 1:n_radial
+    connect(element,:) = [node_id node_id-n_radial+i-1];
+    element = element + 1;
+end
+
+spiral = 1:n_spiral*n_radial-1;
+
+geo.nodes = node;
+geo.connect = connect;
+geo.spiral = spiral;
+geo.ground_nodes = 1:n_radial;
+geo.displaced = displaced;
+
+end
