@@ -1,0 +1,12 @@
+function [ f ] = web_energy_v2( x,geo,L,K )
+% calculates elastic potential energy for web
+
+
+displaced_nodes = reshape(x,length(x)/3,3); %convert vector of nodal coordinates to x-y pairs
+displaced_eles = displaced_nodes(geo.connect,:); %x-y pairs for all displaced elements
+V = displaced_eles(1:length(geo.connect),:)-displaced_eles(length(geo.connect)+1:end,:); %displaced element vectors
+l = sqrt(sum(V.*V,2)); %displaced lengths
+f = 0.5*(sum(K.*(l-L).^2)); %elastic potential energy
+
+end
+
