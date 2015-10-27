@@ -1,0 +1,48 @@
+function web_plotMesh( geo )
+
+% predefine size of elements matrix
+elements = zeros(length(geo.connect),6);
+
+figure()
+hold on
+box on
+
+[ne,~] = size(geo.connect);
+
+for i = 1:ne
+    
+    % generate element matrix which has two pairs of x-y coordinates
+    elements(i,:) = [geo.nodes(geo.connect(i,1),:) geo.nodes(geo.connect(i,2),:)];
+    
+    % draw lines representing web segments ("elements")
+    %     line([elements(i,1) elements(i,4)],[elements(i,2) elements(i,5)],[elements(i,3) elements(i,6)],'color','k','linewidth',1)
+    line([elements(i,1) elements(i,4)],[elements(i,2) elements(i,5)],'color','k','linewidth',1)
+    % label element numbers at element midpoints
+    %text(elements(i,1)+0.5*(elements(i,4)-elements(i,1)),elements(i,2)+...
+    %0.5*(elements(i,5)-elements(i,2)),elements(i,3)+0.5*(elements(i,6)-elements(i,3)),num2str(i),...
+    %'horizontalalignment','center','backgroundcolor',[1 1 1],'fontsize',8)
+    text(elements(i,1)+0.5*(elements(i,4)-elements(i,1)),elements(i,2)+...
+        0.5*(elements(i,5)-elements(i,2)),num2str(i),...
+        'horizontalalignment','center','backgroundcolor',[1 1 1],'fontsize',8)
+    
+end
+% plot3(geo.nodes(:,1),geo.nodes(:,2),geo.nodes(:,3),'ko','markersize',10,'markerfacecolor',[1 1 1])
+plot(geo.nodes(:,1),geo.nodes(:,2),'ko','markersize',10,'markerfacecolor',[1 1 1])
+for i = 1:length(geo.nodes)
+    
+    % write node numbers for visual check
+    %     text(geo.nodes(i,1),geo.nodes(i,2),geo.nodes(i,3),num2str(i),'HorizontalAlignment','center','fontsize',8)
+    text(geo.nodes(i,1),geo.nodes(i,2),num2str(i),'HorizontalAlignment','center','fontsize',8)
+    
+end
+
+title('Web Mesh')
+xlabel('X')
+ylabel('Y')
+% zlabel('Z')
+axis equal
+% grid on
+% view(45,20)
+
+end
+
